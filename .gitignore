@@ -1,0 +1,4 @@
+mta_archives/
+.vscode/
+# auto generated wildcard
+db/.env

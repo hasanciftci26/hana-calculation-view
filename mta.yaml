@@ -1,0 +1,16 @@
+_schema-version: "2.1"
+ID: calculation_view
+version: 0.0.1
+modules:
+- name: calculation_view-db-deployer
+  type: hdb
+  path: db
+  requires:
+  - name: calculation_view-hdi
+    properties:
+      TARGET_CONTAINER: ~{hdi-container-name}
+resources:
+- name: calculation_view-hdi
+  type: com.sap.xs.hdi-container
+  properties:
+    hdi-container-name: ${service-name}

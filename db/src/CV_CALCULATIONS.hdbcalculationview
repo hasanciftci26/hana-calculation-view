@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Calculation:scenario xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Calculation="http://www.sap.com/ndb/BiModelCalculation.ecore" id="CV_CALCULATIONS" applyPrivilegeType="NONE" dataCategory="DIMENSION" dimensionType="STANDARD" schemaVersion="3.0" hierarchyGeneration="SQL" outputViewType="Projection" cacheInvalidationPeriod="NONE" enforceSqlExecution="true">
+<descriptions defaultDescription="CV_CALCULATIONS"/>
+<localVariables>
+  <variable id="APPLICATIONUSER" type="session"/>
+</localVariables>
+<variableMappings/>
+<dataSources>
+  <DataSource id="CALCULATIONS">
+    <resourceUri>CALCULATIONS</resourceUri>
+  </DataSource>
+  <DataSource id="CALCULATION_VERSIONS">
+    <resourceUri>CALCULATION_VERSIONS</resourceUri>
+  </DataSource>
+  <DataSource id="RecentVersionToCalc$$$$CALCULATIONS$$">
+    <resourceUri>CALCULATIONS</resourceUri>
+  </DataSource>
+  <DataSource id="CalcToCalcVersName$$$$CALCULATION_VERSIONS$$">
+    <resourceUri>CALCULATION_VERSIONS</resourceUri>
+  </DataSource>
+  <DataSource id="CalcToCurrentVers$$$$CALCULATION_VERSIONS$$">
+    <resourceUri>CALCULATION_VERSIONS</resourceUri>
+  </DataSource>
+  <DataSource id="PROJECTS">
+    <resourceUri>PROJECTS</resourceUri>
+  </DataSource>
+  <DataSource id="AUTH_PROJECTS">
+    <resourceUri>AUTH_PROJECTS</resourceUri>
+  </DataSource>
+</dataSources>
+<snapshotProcedures/>
+<calculationViews>
+  <calculationView xsi:type="Calculation:JoinView" id="CalcToRecentVersion" cardinality="C1_N" joinType="inner" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_VERSION_ID"/>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="CALCULATION_VERSION_TYPE"/>
+      <viewAttribute hidden="true" id="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CALCULATIONS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+    </input>
+    <input node="CALCULATION_VERSIONS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_ID" source="CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_TYPE" source="CALCULATION_VERSION_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+    </input>
+    <filter>&quot;CALCULATION_VERSION_TYPE&quot; != 2</filter>
+    <joinAttribute name="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:AggregationView" id="GetRecentVersion">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_VERSION_ID" aggregationType="max"/>
+      <viewAttribute id="CALCULATION_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <restrictedViewAttributes/>
+    <input node="CalcToRecentVersion"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="RecentVersionToCalc" cardinality="C1_1" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="NAME"/>
+      <viewAttribute id="CALCULATION_VERSION_ID"/>
+      <viewAttribute id="CURRENT_CALCULATION_VERSION_ID"/>
+      <viewAttribute id="PROJECT_ID"/>
+      <viewAttribute hidden="true" id="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="RecentVersionToCalc$$$$CALCULATIONS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROJECT_ID" source="PROJECT_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+    </input>
+    <input node="GetRecentVersion">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_ID" source="CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+    </input>
+    <joinAttribute name="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="CalcToCalcVersName" cardinality="C1_1" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="NAME"/>
+      <viewAttribute id="RECENT_CALC_VERS_ID"/>
+      <viewAttribute id="CALCULATION_VERSION_TYPE"/>
+      <viewAttribute id="RECENT_CALC_VERS_TYPE"/>
+      <viewAttribute id="CURRENT_CALCULATION_VERSION_ID"/>
+      <viewAttribute id="PROJECT_ID"/>
+      <viewAttribute hidden="true" id="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+      <viewAttribute hidden="true" id="JOIN$CALCULATION_VERSION_ID$CALCULATION_VERSION_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="RecentVersionToCalc">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_ID" source="CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROJECT_ID" source="PROJECT_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_VERSION_ID$CALCULATION_VERSION_ID" source="CALCULATION_VERSION_ID"/>
+    </input>
+    <input node="CalcToCalcVersName$$$$CALCULATION_VERSIONS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_TYPE" source="CALCULATION_VERSION_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_TYPE" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_VERSION_ID$CALCULATION_VERSION_ID" source="CALCULATION_VERSION_ID"/>
+    </input>
+    <joinAttribute name="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+    <joinAttribute name="JOIN$CALCULATION_VERSION_ID$CALCULATION_VERSION_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="CalcToCurrentVers" cardinality="C1_1" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="CALC_NAME"/>
+      <viewAttribute id="RECENT_CALC_VERS_ID"/>
+      <viewAttribute id="CALCULATION_VERSION_TYPE"/>
+      <viewAttribute id="RECENT_CALC_VERS_TYPE"/>
+      <viewAttribute id="CURRENT_CALCULATION_VERSION_ID"/>
+      <viewAttribute id="CURRENT_CALC_VERS_NAME"/>
+      <viewAttribute id="PROJECT_ID"/>
+      <viewAttribute hidden="true" id="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+      <viewAttribute hidden="true" id="JOIN$CURRENT_CALCULATION_VERSION_ID$CALCULATION_VERSION_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CalcToCalcVersName">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALC_NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_ID" source="RECENT_CALC_VERS_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_TYPE" source="CALCULATION_VERSION_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_TYPE" source="RECENT_CALC_VERS_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROJECT_ID" source="PROJECT_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CURRENT_CALCULATION_VERSION_ID$CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+    </input>
+    <input node="CalcToCurrentVers$$$$CALCULATION_VERSIONS$$">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALC_VERS_NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CALCULATION_ID$CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$CURRENT_CALCULATION_VERSION_ID$CALCULATION_VERSION_ID" source="CALCULATION_VERSION_ID"/>
+    </input>
+    <joinAttribute name="JOIN$CALCULATION_ID$CALCULATION_ID"/>
+    <joinAttribute name="JOIN$CURRENT_CALCULATION_VERSION_ID$CALCULATION_VERSION_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="CalcToProject" cardinality="C1_1" joinType="inner">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="CALC_NAME"/>
+      <viewAttribute id="RECENT_CALC_VERS_ID"/>
+      <viewAttribute id="CALCULATION_VERSION_TYPE"/>
+      <viewAttribute id="RECENT_CALC_VERS_TYPE"/>
+      <viewAttribute id="CURRENT_CALCULATION_VERSION_ID"/>
+      <viewAttribute id="CURRENT_CALC_VERS_NAME"/>
+      <viewAttribute id="PROJECT_ID"/>
+      <viewAttribute id="NAME"/>
+      <viewAttribute hidden="true" id="JOIN$PROJECT_ID$PROJECT_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CalcToCurrentVers">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALC_NAME" source="CALC_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_ID" source="RECENT_CALC_VERS_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_TYPE" source="CALCULATION_VERSION_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_TYPE" source="RECENT_CALC_VERS_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALC_VERS_NAME" source="CURRENT_CALC_VERS_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROJECT_ID" source="PROJECT_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROJECT_ID$PROJECT_ID" source="PROJECT_ID"/>
+    </input>
+    <input node="PROJECTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROJECT_ID$PROJECT_ID" source="PROJECT_ID"/>
+    </input>
+    <joinAttribute name="JOIN$PROJECT_ID$PROJECT_ID"/>
+  </calculationView>
+  <calculationView xsi:type="Calculation:JoinView" id="CalcToAuthProject" cardinality="CN_N" joinType="inner" filterExpressionLanguage="SQL">
+    <viewAttributes>
+      <viewAttribute id="CALCULATION_ID"/>
+      <viewAttribute id="CALC_NAME"/>
+      <viewAttribute id="RECENT_CALC_VERS_ID"/>
+      <viewAttribute id="CALCULATION_VERSION_TYPE"/>
+      <viewAttribute id="RECENT_CALC_VERS_TYPE"/>
+      <viewAttribute id="CURRENT_CALCULATION_VERSION_ID"/>
+      <viewAttribute id="CURRENT_CALC_VERS_NAME"/>
+      <viewAttribute id="PROJECT_ID"/>
+      <viewAttribute id="NAME"/>
+      <viewAttribute id="USER_ID"/>
+      <viewAttribute hidden="true" id="JOIN$PROJECT_ID$PROJECT_ID"/>
+    </viewAttributes>
+    <calculatedViewAttributes/>
+    <input node="CalcToProject">
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_ID" source="CALCULATION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALC_NAME" source="CALC_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_ID" source="RECENT_CALC_VERS_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CALCULATION_VERSION_TYPE" source="CALCULATION_VERSION_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="RECENT_CALC_VERS_TYPE" source="RECENT_CALC_VERS_TYPE"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALCULATION_VERSION_ID" source="CURRENT_CALCULATION_VERSION_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="CURRENT_CALC_VERS_NAME" source="CURRENT_CALC_VERS_NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="PROJECT_ID" source="PROJECT_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="NAME" source="NAME"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROJECT_ID$PROJECT_ID" source="PROJECT_ID"/>
+    </input>
+    <input node="AUTH_PROJECTS">
+      <mapping xsi:type="Calculation:AttributeMapping" target="USER_ID" source="USER_ID"/>
+      <mapping xsi:type="Calculation:AttributeMapping" target="JOIN$PROJECT_ID$PROJECT_ID" source="PROJECT_ID"/>
+    </input>
+    <filter>&quot;USER_ID&quot; = '??APPLICATIONUSER??'</filter>
+    <joinAttribute name="JOIN$PROJECT_ID$PROJECT_ID"/>
+  </calculationView>
+</calculationViews>
+
+<logicalModel id="CalcToAuthProject">
+  <attributes>
+    <attribute id="CALCULATION_ID" order="1" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CALCULATION_ID"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="CALCULATION_ID"/>
+    </attribute>
+    <attribute id="CALC_NAME" order="2" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CALC_NAME"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="CALC_NAME"/>
+    </attribute>
+    <attribute id="RECENT_CALC_VERS_ID" order="3" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="RECENT_CALC_VERS_ID"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="RECENT_CALC_VERS_ID"/>
+    </attribute>
+    <attribute id="CALCULATION_VERSION_TYPE" order="4" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CALCULATION_VERSION_TYPE"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="CALCULATION_VERSION_TYPE"/>
+    </attribute>
+    <attribute id="RECENT_CALC_VERS_TYPE" order="5" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="RECENT_CALC_VERS_TYPE"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="RECENT_CALC_VERS_TYPE"/>
+    </attribute>
+    <attribute id="CURRENT_CALCULATION_VERSION_ID" order="6" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CURRENT_CALCULATION_VERSION_ID"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="CURRENT_CALCULATION_VERSION_ID"/>
+    </attribute>
+    <attribute id="CURRENT_CALC_VERS_NAME" order="7" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="CURRENT_CALC_VERS_NAME"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="CURRENT_CALC_VERS_NAME"/>
+    </attribute>
+    <attribute id="PROJECT_ID" order="8" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="PROJECT_ID"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="PROJECT_ID"/>
+    </attribute>
+    <attribute id="NAME" order="9" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="NAME"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="NAME"/>
+    </attribute>
+    <attribute id="USER_ID" order="10" displayAttribute="false" attributeHierarchyActive="false">
+      <descriptions defaultDescription="USER_ID"/>
+      <keyMapping columnObjectName="CalcToAuthProject" columnName="USER_ID"/>
+    </attribute>
+  </attributes>
+  <calculatedAttributes/>
+  <baseMeasures/>
+  <calculatedMeasures/>
+  <restrictedMeasures/>
+</logicalModel>
+<layout>
+  <shapes>
+    <shape expanded="true" modelObjectName="Output" modelObjectNameSpace="MeasureGroup">
+      <upperLeftCorner x="200.70696311744982" y="112"/>
+    
+      <rectangleSize width="160"/>
+    </shape>
+    
+  
+    <shape expanded="true" modelObjectName="CalcToRecentVersion" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="183.77957450645914" y="1061.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="CALCULATIONS" modelObjectNameSpace="CalcToRecentVersion" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="252"/>
+    </shape>
+    <shape modelObjectName="CALCULATION_VERSIONS" modelObjectNameSpace="CalcToRecentVersion" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="179"/>
+    </shape>
+    <shape expanded="true" modelObjectName="GetRecentVersion" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="183.77957450645914" y="956.9999964237213"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape expanded="true" modelObjectName="RecentVersionToCalc" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="119.4544913993534" y="796.9999976158142"/>
+      <rectangleSize height="30" width="249"/>
+    </shape>
+    <shape modelObjectName="CALCULATIONS" modelObjectNameSpace="RecentVersionToCalc" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="234"/>
+    </shape>
+    <shape modelObjectName="GetRecentVersion" modelObjectNameSpace="RecentVersionToCalc" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="179"/>
+    </shape>
+    <shape expanded="true" modelObjectName="CalcToCalcVersName" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="106.4544913993534" y="656.9999976158142"/>
+      <rectangleSize height="30" width="275"/>
+    </shape>
+    <shape modelObjectName="RecentVersionToCalc" modelObjectNameSpace="CalcToCalcVersName" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="234"/>
+    </shape>
+    <shape modelObjectName="CALCULATION_VERSIONS" modelObjectNameSpace="CalcToCalcVersName" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="252"/>
+    </shape>
+    <shape expanded="true" modelObjectName="CalcToCurrentVers" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="91.99999999999994" y="496.9999988079071"/>
+      <rectangleSize height="30" width="311"/>
+    </shape>
+  
+    <shape modelObjectName="CalcToCalcVersName" modelObjectNameSpace="CalcToCurrentVers" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="250"/>
+    </shape>
+    <shape modelObjectName="CALCULATION_VERSIONS" modelObjectNameSpace="CalcToCurrentVers" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="408" y="62"/>
+      <rectangleSize width="252"/>
+    </shape>
+    <shape expanded="true" modelObjectName="CalcToProject" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="167.5" y="376.9999988079071"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="CalcToCurrentVers" modelObjectNameSpace="CalcToProject" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="294.8388671875"/>
+    </shape>
+    <shape modelObjectName="PROJECTS" modelObjectNameSpace="CalcToProject" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="154.45458984375"/>
+    </shape>
+    <shape expanded="true" modelObjectName="CalcToAuthProject" modelObjectNameSpace="CalculationView">
+      <upperLeftCorner x="200.70696311744985" y="217"/>
+      <rectangleSize height="30" width="160"/>
+    </shape>
+    <shape modelObjectName="CalcToProject" modelObjectNameSpace="CalcToAuthProject" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="20" y="30"/>
+      <rectangleSize width="294.8388671875"/>
+    </shape>
+    <shape modelObjectName="AUTH_PROJECTS" modelObjectNameSpace="CalcToAuthProject" modelObjectType="JoinNodeInput">
+      <upperLeftCorner x="320" y="30"/>
+      <rectangleSize width="168.68359375"/>
+    </shape>
+  </shapes>
+</layout>
+</Calculation:scenario>
